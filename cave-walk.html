@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cave Walk — PSIR 307</title>
+<style>
+  :root{
+    --navy:#103460; --tint:#eef2f8; --grey:#5e646e;
+    --rule:#b4bac2; --amber:#8c500a; --paper:#ffffff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:0; background:var(--tint);
+    font-family:Georgia,'Times New Roman',serif;
+    color:#1a1a1a; line-height:1.55;
+  }
+  .wrap{max-width:640px; margin:0 auto; padding:18px 16px 48px;}
+  header{border-bottom:2px solid var(--navy); padding-bottom:10px; margin-bottom:18px;}
+  h1{font-size:1.45rem; color:var(--navy); margin:0 0 2px;}
+  .sub{font-size:.85rem; color:var(--grey); font-style:italic;}
+  .card{
+    background:var(--paper); border:1px solid var(--rule);
+    border-radius:3px; padding:18px 16px; margin-bottom:16px;
+  }
+  .stage-no{
+    font-size:.75rem; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--grey); margin-bottom:6px;
+  }
+  h2{font-size:1.1rem; color:var(--navy); margin:0 0 10px;}
+  blockquote{
+    margin:0 0 14px; padding:10px 14px; background:var(--tint);
+    border-left:3px solid var(--navy); font-size:.92rem; font-style:italic;
+  }
+  blockquote cite{display:block; margin-top:6px; font-size:.8rem;
+    font-style:normal; color:var(--grey);}
+  .prompt{margin-bottom:14px;}
+  button.opt{
+    display:block; width:100%; text-align:left; margin-bottom:10px;
+    padding:13px 14px; font-family:inherit; font-size:.97rem; line-height:1.4;
+    background:var(--paper); border:1.5px solid var(--rule);
+    border-radius:3px; cursor:pointer; color:#1a1a1a;
+  }
+  button.opt:hover,button.opt:focus{border-color:var(--navy); background:var(--tint);}
+  .bar{height:4px; background:var(--rule); border-radius:2px; margin-bottom:16px;}
+  .bar span{display:block; height:100%; background:var(--navy);
+    border-radius:2px; transition:width .25s;}
+  .code{
+    font-family:'Courier New',monospace; font-size:2.6rem; font-weight:bold;
+    color:var(--navy); text-align:center; letter-spacing:.12em; margin:6px 0 4px;
+  }
+  .codelab{text-align:center; font-size:.8rem; color:var(--grey);
+    text-transform:uppercase; letter-spacing:.08em; margin-bottom:16px;}
+  .verdict{font-size:1.15rem; color:var(--navy); font-weight:bold; margin-bottom:8px;}
+  .sting{border-left:3px solid var(--amber); background:#fdf6ec;
+    padding:12px 14px; margin:16px 0; font-size:.93rem;}
+  .path{font-size:.86rem; color:var(--grey); margin-top:14px;}
+  .path li{margin-bottom:4px;}
+  footer{font-size:.78rem; color:var(--grey); text-align:center;
+    margin-top:26px; line-height:1.5;}
+  a{color:var(--navy);}
+  .ghost{
+    background:none; border:none; color:var(--grey); font-family:inherit;
+    font-size:.82rem; text-decoration:underline; cursor:pointer; padding:4px;
+  }
+  .panel{background:#fff; border:1px dashed var(--navy); padding:14px;
+    font-size:.88rem; margin-top:14px;}
+  .panel h3{color:var(--navy); font-size:.95rem; margin:0 0 8px;}
+  table{border-collapse:collapse; width:100%; font-size:.85rem; margin:8px 0 12px;}
+  th,td{border-bottom:1px solid var(--rule); padding:6px 4px; text-align:left;}
+  th{color:var(--navy);}
+  @media print{ body{background:#fff;} .noprint{display:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Cave Walk</h1>
+  <div class="sub">PSIR&nbsp;307 · Week 2 · Plato, <em>Republic</em> VII</div>
+</header>
+
+<div class="bar"><span id="bar" style="width:0%"></span></div>
+<div id="app"></div>
+
+<footer class="noprint">
+  This app runs entirely in your browser. Nothing is transmitted, nothing is
+  stored, and no account is needed. Close the tab and it is gone.<br>
+  <button class="ghost" id="teach">Instructor view</button>
+</footer>
+
+<div id="panel"></div>
+
+</div>
+
+<script>
+/* ---------------------------------------------------------------
+   Cave Walk — PSIR 307 toolkit
+   Two axes:  A = willingness to ascend (stages 1-4)
+              R = willingness to return (stages 5-6)
+   Each 0-6.  Result code e.g. "A5 R1".
+----------------------------------------------------------------*/
+
+const STAGES = [
+  {
+    title: "The chains",
+    quote: "Human beings living in an underground den... here they have been from their childhood, and have their legs and necks chained so that they cannot move, and can only see before them.",
+    cite: "Republic 514a",
+    prompt: "You have been here as long as you can remember. The shadows on the wall are what you and everyone you know call <em>the things that are</em>. Tonight a fellow prisoner works one hand free and offers to loosen your chains.",
+    opts: [
+      { t: "Refuse. The shadows are reliable, shared, and enough.", a:0, r:0 },
+      { t: "Accept the loosening, but keep facing the wall.", a:1, r:0 },
+      { t: "Accept, and turn around to see what is behind you.", a:2, r:0 }
+    ]
+  },
+  {
+    title: "The fire",
+    quote: "He will suffer sharp pains; the glare will distress him, and he will be unable to see the realities of which in his former state he had seen the shadows.",
+    cite: "Republic 515c",
+    prompt: "Turning hurts. The fire is painfully bright, and the objects casting the shadows look blurred and less real to you than the shadows did. Someone tells you that what you saw before was nonsense.",
+    opts: [
+      { t: "Turn back. The shadows were sharper — that is evidence.", a:0, r:0 },
+      { t: "Stay turned, but say nothing and trust nothing yet.", a:1, r:0 },
+      { t: "Endure the pain and demand an explanation of the fire.", a:2, r:0 }
+    ]
+  },
+  {
+    title: "The ascent",
+    quote: "And suppose once more, that he is reluctantly dragged up a steep and rugged ascent, and held fast until he is forced into the presence of the sun.",
+    cite: "Republic 515e",
+    prompt: "There is a passage upward. It is steep, it is long, and the person pulling you will not answer your questions on the way. You could still break free and go back down to a place where you know your way around.",
+    opts: [
+      { t: "Break free and return to the fire. This is coercion.", a:0, r:1 },
+      { t: "Go, but under protest, and only because you are held.", a:1, r:0 },
+      { t: "Go willingly, without knowing what is at the top.", a:2, r:0 }
+    ]
+  },
+  {
+    title: "The light",
+    quote: "He will require to grow accustomed to the sight of the upper world. And first he will see the shadows best, next the reflections of men and other objects in the water, and then the objects themselves.",
+    cite: "Republic 516a",
+    prompt: "You are out. You are also blind — the light is unbearable and you can make out nothing at all. There is a method for adjusting, and it is slow: shadows first, then reflections in water, then things, then the night sky, and only at the very end the sun.",
+    opts: [
+      { t: "Give up and feel your way back to the entrance.", a:0, r:0 },
+      { t: "Look straight at the sun now and be done with it.", a:1, r:0 },
+      { t: "Follow the slow method, in order, however long it takes.", a:2, r:0 }
+    ]
+  },
+  {
+    title: "The sun",
+    quote: "Last of all he will be able to see the sun... and he will proceed to argue that this is he who gives the season and the years, and is the guardian of all that is in the visible world.",
+    cite: "Republic 516b",
+    prompt: "You can now look at the sun itself, and you understand that it is the cause of everything you were looking at before — including, it turns out, the fire and the shadows. You remember the den, your old companions, and the honours they gave each other for guessing which shadow came next.",
+    opts: [
+      { t: "Stay here. This is what a life is for; the den was a mistake.", a:0, r:0 },
+      { t: "Stay, but write down what you have seen for anyone who follows.", a:0, r:1 },
+      { t: "Feel the pull to go back and tell them, though you dread it.", a:0, r:2 },
+      { t: "Go back immediately. Knowledge you keep is knowledge wasted.", a:0, r:3 }
+    ]
+  },
+  {
+    title: "The return",
+    quote: "Men would say of him that up he went and down he came without his eyes; and that it was better not even to think of ascending... if any one tried to loose another and lead him up to the light, let them only catch the offender, and they would put him to death.",
+    cite: "Republic 517a",
+    prompt: "You know what going back costs. Your eyes will be useless in the dark, you will lose every shadow-guessing contest, and they will conclude from your clumsiness that the journey ruins people. They will not thank you. They may do worse.",
+    opts: [
+      { t: "Do not go back. The cost is real and the benefit is speculative.", a:0, r:0 },
+      { t: "Go back only if someone with authority compels you to.", a:0, r:1 },
+      { t: "Go back to teach whoever will listen, and accept the ridicule.", a:0, r:2 },
+      { t: "Go back, and take charge of the den whether they consent or not.", a:0, r:3 }
+    ]
+  }
+];
+
+let i = 0, A = 0, R = 0, path = [];
+
+const app   = document.getElementById('app');
+const bar   = document.getElementById('bar');
+const panel = document.getElementById('panel');
+
+function render(){
+  if(i >= STAGES.length){ return result(); }
+  const s = STAGES[i];
+  bar.style.width = Math.round((i / STAGES.length) * 100) + '%';
+  let html = '<div class="card">'
+    + '<div class="stage-no">Stage ' + (i+1) + ' of ' + STAGES.length + ' — ' + s.title + '</div>'
+    + '<blockquote>' + s.quote + '<cite>' + s.cite + '</cite></blockquote>'
+    + '<div class="prompt">' + s.prompt + '</div>';
+  s.opts.forEach(function(o, n){
+    html += '<button class="opt" data-n="' + n + '">' + o.t + '</button>';
+  });
+  html += '</div>';
+  app.innerHTML = html;
+  Array.prototype.forEach.call(app.querySelectorAll('button.opt'), function(b){
+    b.addEventListener('click', function(){ choose(parseInt(b.dataset.n,10)); });
+  });
+  window.scrollTo(0,0);
+}
+
+function choose(n){
+  const s = STAGES[i], o = s.opts[n];
+  A += o.a; R += o.r;
+  path.push(s.title + ': ' + o.t);
+  i++;
+  render();
+}
+
+function verdict(){
+  const highA = A >= 5, highR = R >= 3;
+  if(highA && highR) return {
+    n:"The Guardian",
+    d:"You made the ascent and you are going back. This is the figure Plato wants and doubts he can get: someone who has seen the Good and will nevertheless re-enter the dark to govern people who will resent it. Hold on to how reluctant you were at Stage 6 — Plato thinks that reluctance is the qualification, not the obstacle."
+  };
+  if(highA && !highR) return {
+    n:"The Contemplative",
+    d:"You climbed, you saw, and you are staying. This is the most common result in this class, and it is exactly Plato's problem. At 519d he says philosophers left to themselves will not come down — which is why, at 520a, the founders of the city must <em>compel</em> them. You have just supplied the evidence for the compulsion."
+  };
+  if(!highA && highR) return {
+    n:"The Returner Who Did Not Climb",
+    d:"You are willing to go back and tell people something, but you turned back or took a shortcut on the way up. Plato would say this is the most dangerous position in the allegory: conviction about the light, acquired without the ascent. Most of the people in the den who claim to know things are here."
+  };
+  return {
+    n:"The Prisoner",
+    d:"You stayed, or you went back early. Note that Plato does not think this is stupidity — at 515e he says the prisoner is <em>dragged</em>, and that anyone would resist. The shadows are shared, legible and useful. The question the class has to answer is what would make leaving rational rather than merely brave."
+  };
+}
+
+function result(){
+  bar.style.width = '100%';
+  const v = verdict();
+  const code = 'A' + A + ' R' + R;
+  let html = '<div class="card">'
+    + '<div class="stage-no">Your result</div>'
+    + '<div class="code">' + code + '</div>'
+    + '<div class="codelab">Hold this up when asked</div>'
+    + '<div class="verdict">' + v.n + '</div>'
+    + '<div>' + v.d + '</div>'
+    + '<div class="sting"><strong>One more thing.</strong> The man who went back down and '
+    + 'told them was not merely laughed at. Plato has him killed — and his readers in 375&nbsp;BC '
+    + 'knew precisely whose execution he was describing. The allegory is not a diagram. '
+    + 'It is an argument about what Athens did to Socrates, written by the person who watched it happen.</div>'
+    + '<div class="path"><strong>The path you took</strong><ul><li>'
+    + path.join('</li><li>') + '</li></ul></div>'
+    + '</div>'
+    + '<div class="card noprint"><button class="opt" id="again">Walk it again</button></div>';
+  app.innerHTML = html;
+  document.getElementById('again').addEventListener('click', function(){
+    i=0; A=0; R=0; path=[]; render();
+  });
+  window.scrollTo(0,0);
+}
+
+/* ---------- instructor view ---------- */
+document.getElementById('teach').addEventListener('click', function(){
+  if(panel.innerHTML){ panel.innerHTML=''; return; }
+  panel.innerHTML =
+    '<div class="panel">'
+    + '<h3>Running Cave Walk — 12 minutes</h3>'
+    + '<p><strong>1. Run it (5 min).</strong> Students walk the cave on their own devices. '
+    + 'Ask them not to discuss until everyone has a code.</p>'
+    + '<p><strong>2. Tally (3 min).</strong> Four quadrants, hands up, write the numbers on the board:</p>'
+    + '<table><tr><th>Quadrant</th><th>Code</th><th>Count</th></tr>'
+    + '<tr><td>Guardian</td><td>A&nbsp;5-6 · R&nbsp;3+</td><td></td></tr>'
+    + '<tr><td>Contemplative</td><td>A&nbsp;5-6 · R&nbsp;0-2</td><td></td></tr>'
+    + '<tr><td>Returner who did not climb</td><td>A&nbsp;0-4 · R&nbsp;3+</td><td></td></tr>'
+    + '<tr><td>Prisoner</td><td>A&nbsp;0-4 · R&nbsp;0-2</td><td></td></tr></table>'
+    + '<p><strong>3. The move (4 min).</strong> The Contemplative column is normally the '
+    + 'largest. Put <em>Republic</em> 519d-520a on the screen and ask: if this room will not '
+    + 'go back voluntarily, and Plato knew it, then what follows for who should hold power? '
+    + 'Plato\'s answer — that the unwilling are the only safe rulers — is the inheritance '
+    + 'that Machiavelli, Hobbes and Rousseau each refuse in a different way.</p>'
+    + '<p><strong>Question Ledger candidates.</strong> Can a person be obliged to accept '
+    + 'power they do not want? Is the reluctance of a ruler evidence of anything at all? '
+    + 'If the prisoners consent to the shadows, what is wrong with the shadows?</p>'
+    + '<p><strong>No-network fallback.</strong> Read the six stages aloud; students record '
+    + 'their choices on paper; tally by hands. The printed sheet is in the repo.</p>'
+    + '</div>';
+});
+
+render();
+</script>
+</body>
+</html>
