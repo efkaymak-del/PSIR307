@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<title>Constitution Builder — PSIR 307 Week 3</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:0;background:#fff;color:#1b1f24;
+ font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:1.55}
+header{background:#103460;color:#fff;padding:18px 16px}
+header .kicker{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
+ color:#c8d6e8;margin:0 0 6px}
+header h1{margin:0;font-size:1.5rem;line-height:1.2}
+header .sub{margin:6px 0 0;font-size:.95rem;color:#dbe5f1}
+.wrap{max-width:780px;margin:0 auto;padding:16px}
+.card{border:1px solid #c9d3e0;border-radius:6px;padding:16px;margin:0 0 18px;background:#fff}
+.card.tinted{background:#EEF2F8}
+h2{font-size:1.2rem;color:#103460;margin:0 0 10px;line-height:1.25}
+h3{font-size:1rem;color:#103460;margin:18px 0 6px}
+p{margin:0 0 12px}
+.meta{font-size:.84rem;color:#5E646E;margin:0 0 12px}
+.brief{font-size:.97rem}
+.srcnote{font-size:.82rem;color:#5E646E;border-left:3px solid #c9d3e0;
+ padding:6px 0 6px 10px;margin:12px 0}
+.disclose{border:1px solid #8C500A;background:#FBF2E3;border-radius:6px;
+ padding:12px;margin:14px 0;font-size:.93rem}
+.disclose strong{color:#8C500A}
+.q{margin:20px 0 0;padding:0 0 4px}
+.q .qtext{font-weight:bold;display:block;margin:0 0 2px}
+.q .qref{font-size:.8rem;color:#5E646E;display:block;margin:0 0 8px}
+.choice{display:block;width:100%;min-height:48px;font:inherit;font-size:.97rem;
+ text-align:left;background:#fff;color:#1b1f24;border:1px solid #9fb2c8;
+ border-radius:4px;padding:10px 12px;margin:0 0 6px;cursor:pointer;
+ -webkit-appearance:none;line-height:1.35}
+.choice:active{background:#dde6f2}
+.choice.sel{background:#103460;color:#fff;border-color:#103460}
+.choice .gk{font-style:italic;font-size:.86rem;opacity:.85}
+nav.pager{display:block;margin:20px 0 0}
+nav.pager button{min-height:50px;min-width:44px;font:inherit;font-size:1rem;
+ border-radius:4px;cursor:pointer;padding:0 18px}
+.btn-primary{background:#103460;color:#fff;border:1px solid #103460}
+.btn-plain{background:#fff;color:#103460;border:1px solid #9fb2c8}
+.btn-primary[disabled]{background:#9fb2c8;border-color:#9fb2c8;cursor:default}
+.pagerrow{display:table;width:100%}
+.pagerleft{display:table-cell;text-align:left}
+.pagerright{display:table-cell;text-align:right}
+.progress{font-size:.82rem;color:#5E646E;text-align:center;margin:10px 0 0}
+.stage{display:none}
+.stage.active{display:block}
+.verdict{border:2px solid #103460;border-radius:6px;padding:14px;margin:12px 0;
+ background:#EEF2F8}
+.verdict .vname{font-size:1.5rem;font-weight:bold;color:#103460;line-height:1.2}
+.verdict .vgk{font-style:italic;color:#5E646E;font-size:.95rem;margin:2px 0 8px}
+.verdict .vdef{font-size:.93rem;margin:0}
+.grid{display:table;width:100%;border-collapse:collapse;margin:10px 0 14px}
+.grow{display:table-row}
+.gcell{display:table-cell;border:1px solid #c9d3e0;padding:7px 8px;
+ font-size:.88rem;vertical-align:top}
+.gcell.hd{background:#EEF2F8;color:#103460;font-size:.8rem;font-weight:bold}
+.gcell.lab{width:34%;color:#5E646E}
+.pull{font-style:italic;color:#103460;border-left:3px solid #8C500A;
+ padding:2px 0 2px 12px;margin:14px 0;font-size:.97rem}
+.pull cite{display:block;font-style:normal;font-size:.8rem;color:#5E646E;margin:4px 0 0}
+.reveal{display:none;border-top:1px solid #c9d3e0;margin:14px 0 0;padding:12px 0 0}
+.reveal.on{display:block}
+.warn{color:#8C500A;font-size:.88rem;margin:8px 0 0}
+textarea{width:100%;min-height:100px;font:inherit;font-size:.95rem;padding:10px;
+ border:1px solid #9fb2c8;border-radius:4px;background:#fff;color:#1b1f24}
+textarea[readonly]{background:#f5f7fa;font-family:Consolas,Monaco,monospace;
+ font-size:.8rem;min-height:66px}
+.copy{width:100%;min-height:50px;font:inherit;font-size:1rem;background:#103460;
+ color:#fff;border:1px solid #103460;border-radius:4px;cursor:pointer;margin:8px 0 0}
+footer{border-top:1px solid #c9d3e0;margin:10px 0 0;padding:14px 16px 28px;
+ font-size:.8rem;color:#5E646E}
+.teachlink{font-size:.78rem;color:#5E646E;text-decoration:underline;cursor:pointer;
+ background:none;border:none;padding:6px 0;font-family:inherit}
+#teach{display:none}
+#teach.on{display:block}
+@media screen and (max-width:420px){
+ body{font-size:16px}
+ header h1{font-size:1.3rem}
+ .choice{font-size:.92rem;min-height:52px}
+ .gcell{font-size:.82rem;padding:5px 6px}
+}
+@media print{
+ .noprint{display:none !important}
+ body{font-size:10.5pt;line-height:1.35}
+ header{background:#fff;color:#000;border-bottom:2px solid #000;padding:0 0 8pt}
+ header .kicker,header .sub{color:#000}
+ .wrap{max-width:100%;padding:0}
+ .stage{display:block !important;page-break-inside:avoid}
+ .card{border:1px solid #000;margin:0 0 10pt;padding:8pt}
+ .card.tinted{background:#fff}
+ .choice{border:1px solid #000;background:#fff;color:#000;min-height:20pt;
+  padding:4pt 6pt;margin:0 0 3pt}
+ .reveal{display:block !important}
+ .disclose{border:1px solid #000;background:#fff}
+ a{color:#000;text-decoration:none}
+ #teach{display:none !important}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <p class="kicker">PSIR 307 &middot; History of Political Thought I &middot; Week 3</p>
+  <h1>Constitution Builder</h1>
+  <p class="sub">Aristotle, <em>Politics</em> I and III &middot; build a regime, then watch the scheme classify it</p>
+</header>
+
+<div class="wrap">
+
+<!-- ================= STAGE 0 ================= -->
+<div class="stage active" id="s0">
+  <div class="card tinted">
+    <h2>What you are about to do</h2>
+    <p class="brief">Six decisions build a constitution. The page then classifies
+    your creation using Aristotle's own criteria from <em>Politics</em> III.7
+    &mdash; how many rule, and in whose interest &mdash; and tells you which of
+    his six regime types you have made.</p>
+    <p class="brief">After that, four real constitutions are put through the same
+    scheme. You classify each one before you see the detail. One of the four
+    cannot be classified at all, and finding out which is the point of the
+    exercise.</p>
+
+    <div class="disclose">
+      <strong>Told in advance, as always.</strong> Most students build something
+      recognisably modern and are then surprised by the label Aristotle's scheme
+      attaches to it. The surprise is the teaching, not a trick: his
+      <em>democracy</em> is a deviant form, and his <em>polity</em> is the one he
+      admires. You are not being graded on which regime you build.
+    </div>
+
+    <p class="meta"><strong>Privacy.</strong> Nothing leaves this page. Your
+    answers stay in this browser tab and are not stored. Reloading clears them.
+    At the end you can copy a one-line summary to bring to Thursday's session.</p>
+  </div>
+
+  <nav class="pager noprint">
+    <div class="pagerrow"><div class="pagerleft"></div>
+    <div class="pagerright">
+      <button type="button" class="btn-primary" onclick="go(1)">Begin &rarr;</button>
+    </div></div>
+  </nav>
+  <p class="progress noprint">Introduction</p>
+</div>
+
+<!-- ================= STAGE 1: BUILD ================= -->
+<div class="stage" id="s1">
+  <div class="card">
+    <h2>Build your constitution</h2>
+    <p class="meta">Six decisions. All required.</p>
+    <div id="builder"></div>
+  </div>
+  <nav class="pager noprint">
+    <div class="pagerrow">
+      <div class="pagerleft">
+        <button type="button" class="btn-plain" onclick="go(0)">&larr; Back</button>
+      </div>
+      <div class="pagerright">
+        <button type="button" class="btn-primary" id="bnext" disabled
+                onclick="classifyBuild()">Classify my regime &rarr;</button>
+      </div>
+    </div>
+  </nav>
+  <p class="progress noprint">Build &middot; stage 1 of 3</p>
+</div>
+
+<!-- ================= STAGE 2: VERDICT ================= -->
+<div class="stage" id="s2">
+  <div class="card">
+    <h2>Aristotle's verdict on your constitution</h2>
+    <div class="verdict">
+      <div class="vname" id="vname"></div>
+      <div class="vgk" id="vgk"></div>
+      <p class="vdef" id="vdef"></p>
+    </div>
+    <div class="grid" id="vgrid"></div>
+    <p class="brief" id="vnote"></p>
+  </div>
+
+  <div class="card tinted">
+    <h2>The prior question you were not asked</h2>
+    <p class="brief" id="citnote"></p>
+    <p class="pull">He who has the power to take part in the deliberative or
+    judicial administration of any state is said by us to be a citizen of that
+    state.
+      <cite>Politics III.1 (Jowett trans., 1885)</cite></p>
+    <p class="brief">Notice the circularity. A citizen is one who shares in
+    office; the constitution decides who shares in office; so the constitution
+    decides who the citizens are, and the question &ldquo;do the many rule?&rdquo;
+    cannot be answered until you already know who has been counted. Hold on to
+    this. It is what makes case&nbsp;2 below so difficult.</p>
+  </div>
+
+  <nav class="pager noprint">
+    <div class="pagerrow">
+      <div class="pagerleft">
+        <button type="button" class="btn-plain" onclick="go(1)">&larr; Rebuild</button>
+      </div>
+      <div class="pagerright">
+        <button type="button" class="btn-primary" onclick="go(3)">Stress test &rarr;</button>
+      </div>
+    </div>
+  </nav>
+  <p class="progress noprint">Verdict &middot; stage 2 of 3</p>
+</div>
+
+<!-- ================= STAGE 3: CASES ================= -->
+<div class="stage" id="s3">
+  <div class="card tinted">
+    <h2>Four real constitutions</h2>
+    <p class="brief">For each one: how many rule, and in whose interest? Choose,
+    then the case opens and you can see what the scheme did or did not manage.
+    Work through all four before moving on.</p>
+  </div>
+  <div id="cases"></div>
+  <nav class="pager noprint">
+    <div class="pagerrow">
+      <div class="pagerleft">
+        <button type="button" class="btn-plain" onclick="go(2)">&larr; Back</button>
+      </div>
+      <div class="pagerright">
+        <button type="button" class="btn-primary" id="cnext" disabled
+                onclick="showResult()">My result &rarr;</button>
+      </div>
+    </div>
+  </nav>
+  <p class="progress noprint">Stress test &middot; stage 3 of 3</p>
+</div>
+
+<!-- ================= RESULT ================= -->
+<div class="stage" id="sres">
+  <div class="card">
+    <h2>What you did</h2>
+    <div class="grid" id="resgrid"></div>
+    <p class="brief" id="diagnostic"></p>
+  </div>
+
+  <div class="card tinted">
+    <h2>The two questions for Thursday</h2>
+    <p class="brief"><strong>One.</strong> Switzerland before 1971 and South
+    Africa after 1983 both held elections, had courts and constitutions, and both
+    excluded most adult residents from the franchise &mdash; women in the first
+    case, Black Africans in the second. Nearly everyone classifies them
+    differently. State the principled difference. If you cannot state one, say so
+    plainly: that is a more useful contribution than inventing a criterion on the
+    spot.</p>
+    <p class="brief"><strong>Two.</strong> The 1960 Constitution of Cyprus has no
+    place in Aristotle's six types, because his scheme assumes a single citizen
+    body divided by wealth or virtue, not two communities each partly governing
+    itself under external guarantee. Name the concept Aristotle would have needed.
+    Then ask the harder version: is the gap a defect in a scheme built for the
+    <em>polis</em>, or does it tell you something about the 1960 arrangement
+    itself?</p>
+
+    <p class="pull">For the many, of whom each individual is not a good man, when
+    they meet together may be better than the few good.
+      <cite>Politics III.11 (Jowett trans., 1885)</cite></p>
+    <p class="brief">Read III.11 against Module 2. Plato's answer to &ldquo;who
+    decides?&rdquo; was the one who knows. Aristotle's is that assembled
+    mediocrity may out-judge isolated excellence. That disagreement is the spine
+    of the first half of this course, and you now have a regime of your own
+    design to test it on.</p>
+  </div>
+
+  <div class="card">
+    <h2>Summary line</h2>
+    <p class="brief">Copy this and keep it &mdash; bring it Thursday. The Week 3
+    submission route will be announced in class.</p>
+    <textarea id="line" readonly></textarea>
+    <button type="button" class="copy" onclick="copyBox('line',this)">Copy my summary line</button>
+    <p class="meta">If copying fails, select the text and copy it by hand, or
+    photograph the screen.</p>
+  </div>
+
+  <nav class="pager noprint">
+    <div class="pagerrow">
+      <div class="pagerleft">
+        <button type="button" class="btn-plain" onclick="go(3)">&larr; Back to cases</button>
+      </div>
+      <div class="pagerright"></div>
+    </div>
+  </nav>
+  <p class="progress noprint">Result</p>
+</div>
+
+<!-- ================= INSTRUCTOR ================= -->
+<div class="card" id="teach">
+  <h2>Instructor view</h2>
+
+  <h3>Session shape, Tuesday single period</h3>
+  <p class="brief">The build and verdict take about eight minutes, the four cases
+  about fifteen. On a single 50-minute Tuesday, run build and verdict in class,
+  set the four cases as the asynchronous half, and open Thursday's double with the
+  two questions. If you have the double period, run the whole thing and debrief in
+  the second half.</p>
+
+  <h3>Collect this on the board</h3>
+  <p class="brief">Hands up for each of the six verdicts from stage 2. Expect a
+  heavy clustering on <em>democracy</em> and <em>polity</em>, with a few
+  aristocracies from students who gave offices to the educated. The oligarchies
+  are usually accidental &mdash; a property qualification chosen for stability
+  without noticing what it does to the interest column. Ask those students whether
+  they intended an oligarchy. The honest ones say no, which is the opening for
+  III.8 on how oligarchy and democracy are defined by wealth rather than by
+  numbers.</p>
+
+  <h3>Debrief order</h3>
+  <p class="brief">Case 1 first, briefly: Athens is the paradigm and students
+  mostly get it, though they resist calling it a deviation. Worth saying aloud
+  that Aristotle wrote this classification as a resident alien in that city, with
+  no vote and no right to own land &mdash; he is classifying the regime that
+  hosted and excluded him.</p>
+  <p class="brief">Then Switzerland and South Africa <em>as a pair</em>, and do
+  not let them be taken separately. This is the hour's hinge. Almost every student
+  calls Switzerland rule of the many in the common interest and South Africa rule
+  of the few in their own interest, and the two cases are structurally parallel on
+  the franchise question. Push until someone produces one of three answers:
+  that the excluded group was a minority in one case and a majority in the other
+  (check the numbers &mdash; women were not a minority); that one system was
+  open to reform from within and the other was not; or that the exclusion was by
+  ascriptive group in one case and by sex in the other, which is a distinction
+  that needs defending rather than stating. Any of the three is progress. The
+  reflex answer &mdash; that one was a real democracy and the other a sham
+  &mdash; is the thing to interrogate.</p>
+  <p class="brief">Cyprus 1960 last, and do not resolve it. The point is
+  structural, not political: the scheme fails because it has one demos where the
+  constitution had two. Students from either community will reach for familiar
+  positions about who wrecked it; redirect to the classificatory question, which
+  is genuinely neutral and genuinely hard.</p>
+
+  <h3>If the room resists the Athens verdict</h3>
+  <p class="brief">They will say democracy cannot be a deviation. Read III.7
+  aloud: the deviation is rule of the many <em>in the interest of the needy</em>
+  rather than of the whole. Then ask whether any modern democracy satisfies the
+  common-interest condition, and whether a scheme that classifies every actual
+  popular government as deviant is diagnosing or merely disapproving.</p>
+
+  <h3>Texts to have open</h3>
+  <p class="brief"><em>Politics</em> III.1 (definition of the citizen), III.7
+  (the six types), III.8 (oligarchy and democracy by wealth), III.11 (the
+  assembled many). Jowett, Gutenberg 6762, gutenberg.org/files/6762/6762-h/6762-h.htm.
+  Book I.2 if the room needs reminding that the <em>polis</em> is prior to the
+  individual, and I.4&ndash;7 if anyone wants to argue the hierarchy is detachable.</p>
+
+  <h3>Fallback</h3>
+  <p class="brief">Print this page: all six build questions, all four cases and
+  the revealed commentary appear on paper. The classification can be done by hand
+  from the III.7 grid in about the same time.</p>
+</div>
+
+<footer>
+  <p>PSIR 307 &middot; History of Political Thought I &middot; Fall 2026&ndash;27 &middot;
+  Prof. Dr. Erol Kaymak &middot; Eastern Mediterranean University</p>
+  <p>Runs offline in a single file. No data leaves this page. The four cases are
+  documented constitutions; sources are named with each. This activity is an
+  instrument for applying Aristotle's scheme and is <strong>not citable</strong>
+  as evidence about Aristotle or about any of the four constitutions.</p>
+  <p class="noprint"><button type="button" class="teachlink" onclick="toggleTeach()">Instructor view</button></p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script>
+/* ============ BUILD QUESTIONS ============ */
+/* num: 1=one, 2=few, 3=many   int: 1=common, 0=sectional   cit: breadth 1..4 */
+var QS = [
+  { id:"delib", q:"Who holds the deliberative function &mdash; who decides war, law and taxation?",
+    ref:"Politics III.1, III.11",
+    opts:[
+      {t:"An assembly open to every adult resident", gk:"ekkl\u0113sia", num:3, inte:1, cit:4},
+      {t:"An assembly of those holding property above a threshold", gk:"", num:2, inte:0, cit:2},
+      {t:"A council of those judged best qualified", gk:"aristoi", num:2, inte:1, cit:2},
+      {t:"One person, advised but not bound", gk:"monarch\u0113s", num:1, inte:0, cit:1}
+    ]},
+  { id:"offices", q:"How are offices filled?",
+    ref:"Politics IV.9, VI.2",
+    opts:[
+      {t:"By lot, among all who are eligible", gk:"kl\u0113r\u014dsis", num:3, inte:1, cit:4},
+      {t:"By election, with all eligible to vote and to stand", gk:"hairesis", num:3, inte:1, cit:3},
+      {t:"By election, but only the propertied may stand", gk:"", num:2, inte:0, cit:2},
+      {t:"By appointment from above", gk:"", num:1, inte:0, cit:1}
+    ]},
+  { id:"elig", q:"Who may hold office?",
+    ref:"Politics III.1, III.8",
+    opts:[
+      {t:"Any citizen, without qualification", gk:"", num:3, inte:1, cit:4},
+      {t:"Citizens meeting a property qualification", gk:"tim\u0113ma", num:2, inte:0, cit:2},
+      {t:"Those of established descent", gk:"eugeneia", num:2, inte:0, cit:2},
+      {t:"Those certified as having the relevant knowledge", gk:"epist\u0113m\u0113", num:2, inte:1, cit:2}
+    ]},
+  { id:"courts", q:"Who judges disputes and tries offences?",
+    ref:"Politics III.1",
+    opts:[
+      {t:"Juries of citizens chosen by lot", gk:"dikast\u0113ria", num:3, inte:1, cit:4},
+      {t:"Elected magistrates serving fixed terms", gk:"", num:3, inte:1, cit:3},
+      {t:"Appointed judges with legal training, irremovable", gk:"", num:2, inte:1, cit:2},
+      {t:"The ruler or his delegates", gk:"", num:1, inte:0, cit:1}
+    ]},
+  { id:"citizen", q:"Who counts as a citizen in the first place?",
+    ref:"Politics III.1 &mdash; the question Aristotle asks before all the others",
+    opts:[
+      {t:"Every adult resident, however they arrived", gk:"", num:3, inte:1, cit:4},
+      {t:"Every adult born here, plus long-settled residents", gk:"", num:3, inte:1, cit:3},
+      {t:"Those born here of citizen parents", gk:"", num:2, inte:0, cit:2},
+      {t:"Those born here of citizen parents, holding property", gk:"", num:2, inte:0, cit:1}
+    ]},
+  { id:"interest", q:"In whose interest does your law run, when interests conflict?",
+    ref:"Politics III.6&ndash;III.7 &mdash; the criterion that divides the correct forms from the deviations",
+    opts:[
+      {t:"The whole community, including those who lose by a decision", gk:"koinon sumpheron", num:0, inte:1, cit:0},
+      {t:"The majority, whose numbers settle it", gk:"", num:0, inte:0, cit:0},
+      {t:"Those with most at stake, measured by what they contribute", gk:"", num:0, inte:0, cit:0},
+      {t:"Those most capable of governing well", gk:"", num:0, inte:1, cit:0}
+    ]}
+];
+
+var TYPES = {
+  "1-1": { name:"Kingship", gk:"basileia \u2014 a correct form",
+    def:"Rule by one, exercised for the common good. Aristotle treats it as correct in principle and almost unavailable in practice, because the conditions that make one person so outstanding that kingship is just are conditions under which the city has already stopped being a community of equals (III.13, III.17)." },
+  "1-0": { name:"Tyranny", gk:"tyrannis \u2014 a deviation",
+    def:"Rule by one in his own interest. Aristotle's worst regime, and he is explicit that it is the deviation corresponding to kingship: same number of rulers, opposite beneficiary (III.7, IV.10)." },
+  "2-1": { name:"Aristocracy", gk:"aristokratia \u2014 a correct form",
+    def:"Rule by the few, exercised for the common good, where the few are selected for excellence rather than wealth. Aristotle's difficulty, which you should press, is how the city identifies excellence without already agreeing what excellence is for (III.7, IV.7)." },
+  "2-0": { name:"Oligarchy", gk:"oligarchia \u2014 a deviation",
+    def:"Rule by the few in their own interest. Note that Aristotle defines oligarchy by wealth, not by number: it is rule by the propertied, and the fewness follows from the property (III.8). If you set a property qualification anywhere, you probably arrived here." },
+  "3-1": { name:"Polity", gk:"politeia \u2014 the correct popular form",
+    def:"Rule by the many for the common good: the constitutional or mixed regime, which Aristotle names with the same word he uses for constitution as such, because it is the regime in which the constitution genuinely governs. In IV.8\u201311 he describes it as mixing oligarchic and democratic elements and resting on a substantial middle group." },
+  "3-0": { name:"Democracy", gk:"d\u0113mokratia \u2014 a deviation",
+    def:"Rule by the many in the interest of the needy rather than of the whole. For Aristotle this is a deviant form, which is the sentence most modern readers refuse on first encounter. He is not saying popular rule is worthless \u2014 III.11 argues the assembled many may judge better than the few excellent \u2014 he is saying that rule by a part in that part's interest fails the criterion of III.6, whichever part it is." }
+};
+
+var CASES = [
+  {
+    n:1,
+    title:"Athens under the restored democracy",
+    date:"403\u2013322 BCE",
+    teaser:"The assembly was open to all adult male citizens and met about forty times a year. The Council of Five Hundred was filled by lot, as were most magistracies, with pay for service so that the poor could serve. Popular courts of several hundred jurors, also by lot, heard both private suits and political trials. Generals were elected. Classify it before reading further.",
+    reveal:"Citizens numbered perhaps 30,000 adult males in a population of something like 250,000\u2013300,000, once women, children, resident foreigners and slaves are counted. So the regime in which the many ruled was one in which roughly one resident in eight or nine held political rights.\n\nAristotle's own scheme classifies this as <strong>democracy</strong> \u2014 rule of the many in the interest of the needy \u2014 and therefore as a deviation. Two things are worth sitting with. First, he is classifying the city he lived and taught in for most of his adult life as a resident alien, with no vote and no right to own land: he was himself one of the excluded, and his <em>Politics</em> was written in a city whose constitution his own theory judged deviant. Second, if you classified it as rule of the many in the common interest, ask which of the two figures you were using \u2014 30,000 or 300,000 \u2014 and whether Aristotle's definition of the citizen at III.1 lets you use the larger one.",
+    src:"Sources: Aristotle, Politics IV.4, VI.2; Athenaion Politeia 42\u201369; standard estimates of Athenian population are contested and the range above reflects that."
+  },
+  {
+    n:2,
+    title:"Switzerland before women could vote in federal elections",
+    date:"Federal franchise extended 7 February 1971",
+    teaser:"By 1959 Switzerland had the most participatory institutions in Europe: binding referenda on constitutional amendments, popular initiatives, open-air assemblies in some cantons, and a federal council governing by collegial consensus. In a referendum that year the male electorate rejected votes for women, 67 per cent against. Classify the regime as it stood in 1960.",
+    reveal:"The federal franchise was granted on 7 February 1971, when the male electorate approved it with 65.7 per cent in favour. Appenzell Innerrhoden continued to exclude women from cantonal affairs until the Federal Supreme Court compelled it in November 1990.\n\nSo in 1960 the oldest continuous republic in Europe excluded from the vote not a minority but half of its adult population, by a decision of the other half. Apply III.1: a citizen is one who shares in deliberative or judicial office. On that definition the Swiss citizen body was the adult male half, and the regime is rule of a part. Whether you call that part the many or the few depends entirely on your denominator \u2014 which is the circularity the scheme cannot break on its own.\n\nMost students classify this as rule of the many in the common interest. Hold that answer next to case 3 before you defend it.",
+    src:"Sources: Swiss federal referendum results, 1 February 1959 and 7 February 1971; Bundesgericht judgment on Appenzell Innerrhoden, 27 November 1990."
+  },
+  {
+    n:3,
+    title:"South Africa's tricameral parliament",
+    date:"Constitution of 1983, in force 1984\u20131994",
+    teaser:"The 1983 constitution created three chambers: a House of Assembly for white voters with 178 seats, a House of Representatives for coloured voters with 85, and a House of Delegates for Indian voters with 45. Each chamber legislated on its community's own affairs; the ratio was fixed so that the white chamber would prevail on general affairs. There were elections, courts, and a written constitution. Classify it.",
+    reveal:"Black Africans, around three quarters of the population, were excluded entirely and assigned political rights in the homelands instead. The 1984 elections for the two new chambers drew turnout of roughly 30 and 20 per cent respectively, widely read as a boycott.\n\nAristotle's scheme handles this more easily than you might expect: rule of a part in that part's interest is <strong>oligarchy</strong>, and III.8 notes that descent (<em>eugeneia</em>) functions as an oligarchic claim alongside wealth. What the scheme cannot register is the elaborate <em>democratic form</em> \u2014 three elected chambers, each with real authority over its own community's affairs. By institutional structure this is more participatory than many regimes nobody hesitates to call democracies.\n\nNow put this beside case 2. Both regimes held elections and excluded most adult residents from the franchise. Nearly everyone classifies them differently. The question for Thursday is what the principled difference is, and it is a genuine question rather than a trap \u2014 there are defensible answers, but the reflex one, that the second was obviously a sham, is not yet an answer.",
+    src:"Sources: Republic of South Africa Constitution Act 110 of 1983; official 1984 election returns for the Houses of Representatives and Delegates."
+  },
+  {
+    n:4,
+    title:"The Constitution of the Republic of Cyprus",
+    date:"In force 16 August 1960",
+    teaser:"A Greek Cypriot President and a Turkish Cypriot Vice-President, each elected by his own community, each holding a final veto over foreign affairs, defence and security. A Council of Ministers in a seven-to-three ratio. A House of Representatives of thirty-five and fifteen, with separate communal majorities required for tax legislation. Two Communal Chambers with authority over religion, education, culture and personal status. A civil service at seventy-thirty and an army at sixty-forty. Separate municipalities in the five largest towns. Three guarantor powers holding treaty rights. Classify it.",
+    reveal:"You could not, and the scheme is what failed rather than you.\n\nAristotle's two criteria are how many rule and in whose interest. Both presuppose a single citizen body, differentiated internally by wealth, birth or merit, deliberating about one common good. The 1960 Constitution establishes two communities, each electing its own head of the executive, each legislating for itself in a defined sphere, each holding a veto over the other, under the guarantee of three external powers. Who rules is not one, not few, not many: it is two, asymmetrically, with matters reserved to each. And in whose interest is answered by design as each community's own in its own sphere, with the common interest left to whatever survives the vetoes.\n\nThe missing concept is something like a composite or consociational citizenship \u2014 a political community whose fundamental division is ascriptive rather than economic, and whose unity is a treaty rather than a <em>koinonia</em>. Aristotle has no such category. He has conquest, confederation and alliance, none of which is this.\n\nThe harder question, and the one to bring Thursday: is that gap a limitation of a scheme designed for the <em>polis</em>, or does it tell you something about the 1960 arrangement \u2014 that it was not one constitution in Aristotle's sense at all?",
+    src:"Sources: Constitution of the Republic of Cyprus, 16 August 1960, Arts. 1, 46, 50, 78, 86\u201387, 123, 173; Treaty of Guarantee, 16 August 1960."
+  }
+];
+
+var NUMLAB = { 1:"One rules", 2:"Few rule", 3:"Many rule", 9:"The scheme does not apply" };
+var INTLAB = { 1:"The common interest", 0:"A sectional interest", 9:"Cannot be stated" };
+
+var build = {};
+var caseAns = [];
+var verdictKey = "";
+var i0;
+for(i0=0;i0<CASES.length;i0++){ caseAns.push({num:0,inte:0}); }
+
+/* ============ BUILD UI ============ */
+function renderBuilder(){
+  var h = "", i, j;
+  for(i=0;i<QS.length;i++){
+    var q = QS[i];
+    h += '<div class="q"><label class="qtext">'+(i+1)+'. '+q.q+'</label>';
+    h += '<span class="qref">'+q.ref+'</span>';
+    for(j=0;j<q.opts.length;j++){
+      var o = q.opts[j];
+      var gk = o.gk ? ' <span class="gk">('+o.gk+')</span>' : '';
+      h += '<button type="button" class="choice" id="c_'+q.id+'_'+j+'" ' +
+           'onclick="pickBuild(\''+q.id+'\','+j+','+i+')">'+o.t+gk+'</button>';
+    }
+    h += '</div>';
+  }
+  document.getElementById("builder").innerHTML = h;
+}
+
+function pickBuild(id,j,qi){
+  build[id] = j;
+  var q = QS[qi], k;
+  for(k=0;k<q.opts.length;k++){
+    var b = document.getElementById("c_"+id+"_"+k);
+    if(b){ b.className = (k===j) ? "choice sel" : "choice"; }
+  }
+  var done = true, i;
+  for(i=0;i<QS.length;i++){
+    if(typeof build[QS[i].id] === "undefined"){ done = false; }
+  }
+  document.getElementById("bnext").disabled = !done;
+}
+
+/* ============ CLASSIFY ============ */
+function classifyBuild(){
+  var numSum = 0, numCount = 0, intSum = 0, intCount = 0, citSum = 0, citCount = 0;
+  var i;
+  for(i=0;i<QS.length;i++){
+    var q = QS[i];
+    var o = q.opts[build[q.id]];
+    if(o.num > 0){ numSum += o.num; numCount++; }
+    if(q.id === "interest"){ intSum += o.inte * 3; intCount += 3; }
+    else { intSum += o.inte; intCount++; }
+    if(o.cit > 0){ citSum += o.cit; citCount++; }
+  }
+  var numAvg = numSum / numCount;
+  var num = (numAvg < 1.75) ? 1 : (numAvg < 2.5 ? 2 : 3);
+  var intAvg = intSum / intCount;
+  var inte = (intAvg >= 0.6) ? 1 : 0;
+  var citAvg = citSum / citCount;
+
+  verdictKey = num + "-" + inte;
+  var t = TYPES[verdictKey];
+
+  document.getElementById("vname").innerHTML = t.name;
+  document.getElementById("vgk").innerHTML = t.gk;
+  document.getElementById("vdef").innerHTML = t.def;
+
+  var g = "";
+  g += '<div class="grow"><div class="gcell hd">Criterion</div>' +
+       '<div class="gcell hd">Your constitution</div></div>';
+  g += '<div class="grow"><div class="gcell lab">How many rule (III.7)</div>' +
+       '<div class="gcell">'+NUMLAB[num]+'</div></div>';
+  g += '<div class="grow"><div class="gcell lab">In whose interest (III.6)</div>' +
+       '<div class="gcell">'+INTLAB[inte]+'</div></div>';
+  g += '<div class="grow"><div class="gcell lab">Breadth of the citizen body (III.1)</div>' +
+       '<div class="gcell">'+citWord(citAvg)+'</div></div>';
+  document.getElementById("vgrid").innerHTML = g;
+
+  var note = "";
+  if(verdictKey === "3-0"){
+    note = "If this verdict annoys you, good. You have most likely built something close to a modern constitutional democracy and been told it is a deviant form. Aristotle's reason is at III.6: a regime is correct when it rules for the whole, and rule by the many in the interest of the many is rule by a part. Before dismissing that, ask whether any government you know of satisfies his condition \u2014 and if none does, whether the scheme is diagnosing something real or simply setting a standard nothing can meet.";
+  } else if(verdictKey === "3-1"){
+    note = "You have built Aristotle's preferred popular regime, which he names with the same word he uses for constitution as such. Be suspicious of how easily you got here: the common-interest column turns on your answer to question 6, and declaring that the law runs for the whole community is cheap. IV.8\u201311 makes the demand institutional rather than declaratory \u2014 a genuine mixture of oligarchic and democratic elements, resting on a middle group large enough to hold the balance. Does your constitution contain such a mechanism, or only such an intention?";
+  } else if(verdictKey === "2-0"){
+    note = "Oligarchy is rarely chosen on purpose. It usually arrives through a property qualification adopted for stability, or through restricting office to the propertied while leaving the assembly open. III.8 is the relevant passage: the regime is defined by the wealth of the rulers, and their fewness is a consequence rather than the criterion. Look back at which of your six answers carried the property condition.";
+  } else if(verdictKey === "2-1"){
+    note = "Aristocracy in Aristotle's strict sense \u2014 the few ruling for the whole, selected for excellence rather than wealth. The pressure point is identification: your constitution has to specify who certifies excellence, by what standard, and answerable to whom. If the answer is that the excellent certify each other, you have reproduced the difficulty of Republic VII from Module 2 with a committee in place of a philosopher.";
+  } else if(verdictKey === "1-1"){
+    note = "Kingship, which Aristotle treats as correct in principle and nearly impossible in practice. His argument at III.13 and III.17 is worth your attention: the conditions under which rule by one person is just are conditions in which that person so far surpasses everyone else that the city has stopped being an association of equals \u2014 and an association of equals is what a polis is.";
+  } else {
+    note = "Tyranny: rule by one in his own interest, the deviation corresponding to kingship. If you did not intend this, the cause is almost always question 6 combined with concentrated control of offices or courts \u2014 the interest criterion does the work, and no amount of institutional machinery rescues a regime that runs for its ruler.";
+  }
+  document.getElementById("vnote").innerHTML = note;
+
+  var cit = "";
+  if(citAvg >= 3.2){
+    cit = "You enfranchised broadly \u2014 close to every adult resident. Worth knowing that Aristotle would not have recognised your citizen body at all. His own excludes women, slaves, resident foreigners and, at III.5, those who work with their hands (<em>banausoi</em>), on the ground that a life of necessary labour leaves no leisure for the deliberative virtue citizenship requires. That exclusion is not incidental to his theory; it follows from the functional argument of Book I, which is why the week's hard question is whether the teleology can be kept once the hierarchy is thrown out.";
+  } else if(citAvg >= 2.2){
+    cit = "You enfranchised moderately, by descent or settlement. This is roughly the shape of most nineteenth-century European constitutions and of Aristotle's own assumptions, minus the property bar. Notice that your choice here silently determined your answer to the question of how many rule: narrow the citizen body enough and rule by the many becomes rule by a few, with no institution having changed.";
+  } else {
+    cit = "You enfranchised narrowly \u2014 by descent and property together. This makes your regime's classification stable but it also concedes the III.1 problem completely: you decided who the citizens were, and the count of rulers followed from that decision rather than from any institution. Aristotle's own citizen body was similarly narrow, which is why he could treat the question of numbers as though it were about institutions.";
+  }
+  document.getElementById("citnote").innerHTML = cit;
+
+  go(2);
+}
+
+function citWord(a){
+  if(a >= 3.2){ return "Broad \u2014 close to all adult residents"; }
+  if(a >= 2.2){ return "Moderate \u2014 by descent or settlement"; }
+  return "Narrow \u2014 by descent and property";
+}
+
+/* ============ CASES ============ */
+function renderCases(){
+  var h = "", i;
+  for(i=0;i<CASES.length;i++){
+    var c = CASES[i];
+    h += '<div class="card">';
+    h +=   '<h2>Case '+c.n+'. '+c.title+'</h2>';
+    h +=   '<p class="meta">'+c.date+'</p>';
+    h +=   '<p class="brief">'+c.teaser+'</p>';
+    h +=   '<div class="q"><label class="qtext">How many rule?</label>';
+    h +=     btn(i,"num",1,"One") + btn(i,"num",2,"Few") + btn(i,"num",3,"Many") +
+             btn(i,"num",9,"The scheme cannot say");
+    h +=   '</div>';
+    h +=   '<div class="q"><label class="qtext">In whose interest?</label>';
+    h +=     btn(i,"inte",1,"The common interest") + btn(i,"inte",0,"A sectional interest") +
+             btn(i,"inte",9,"Cannot be stated");
+    h +=   '</div>';
+    h +=   '<div class="reveal" id="rev'+i+'">';
+    h +=     '<h3>What the record shows</h3>';
+    h +=     revealHtml(c.reveal);
+    h +=     '<p class="srcnote">'+c.src+'</p>';
+    h +=   '</div>';
+    h += '</div>';
+  }
+  document.getElementById("cases").innerHTML = h;
+}
+
+function btn(i,field,val,label){
+  return '<button type="button" class="choice" id="k'+i+field+val+'" ' +
+         'onclick="pickCase('+i+',\''+field+'\','+val+')">'+label+'</button>';
+}
+
+function revealHtml(txt){
+  var parts = txt.split("\n\n"), h = "", i;
+  for(i=0;i<parts.length;i++){ h += '<p class="brief">'+parts[i]+'</p>'; }
+  return h;
+}
+
+function pickCase(i,field,val){
+  caseAns[i][field] = val;
+  var vals = (field === "num") ? [1,2,3,9] : [1,0,9];
+  var k;
+  for(k=0;k<vals.length;k++){
+    var b = document.getElementById("k"+i+field+vals[k]);
+    if(b){ b.className = (vals[k]===val) ? "choice sel" : "choice"; }
+  }
+  if(caseAns[i].num !== 0 && caseAns[i].inte !== 0){
+    document.getElementById("rev"+i).className = "reveal on";
+  }
+  var done = true, j;
+  for(j=0;j<CASES.length;j++){
+    if(caseAns[j].num === 0 || caseAns[j].inte === 0){ done = false; }
+  }
+  document.getElementById("cnext").disabled = !done;
+}
+
+/* ============ RESULT ============ */
+function showResult(){
+  var t = TYPES[verdictKey];
+  var g = "";
+  g += '<div class="grow"><div class="gcell hd">Item</div>' +
+       '<div class="gcell hd">How many</div><div class="gcell hd">Whose interest</div></div>';
+  g += '<div class="grow"><div class="gcell lab">Your constitution &mdash; <strong>'+
+       t.name+'</strong></div>' +
+       '<div class="gcell">'+NUMLAB[verdictKey.split("-")[0]]+'</div>' +
+       '<div class="gcell">'+INTLAB[verdictKey.split("-")[1]]+'</div></div>';
+  var names = ["Athens 403\u2013322 BCE","Switzerland before 1971",
+               "South Africa 1983\u201394","Cyprus 1960"];
+  var i;
+  for(i=0;i<CASES.length;i++){
+    g += '<div class="grow"><div class="gcell lab">'+names[i]+'</div>' +
+         '<div class="gcell">'+NUMLAB[caseAns[i].num]+'</div>' +
+         '<div class="gcell">'+INTLAB[caseAns[i].inte]+'</div></div>';
+  }
+  document.getElementById("resgrid").innerHTML = g;
+
+  var d = "";
+  var swissCommon = (caseAns[1].num === 3 && caseAns[1].inte === 1);
+  var saSectional = (caseAns[2].inte === 0);
+  var cyprusBreak = (caseAns[3].num === 9 || caseAns[3].inte === 9);
+  var athensDev   = (caseAns[0].num === 3 && caseAns[0].inte === 0);
+
+  if(swissCommon && saSectional){
+    d += "<strong>The pair came apart in your answers.</strong> You called " +
+      "Switzerland rule of the many in the common interest and South Africa " +
+      "sectional. That is the usual result and it is not obviously wrong \u2014 but " +
+      "it needs a reason, because on the franchise criterion the two regimes are " +
+      "parallel: each excluded most adult residents from voting, by sex in one " +
+      "case and by ascriptive group in the other. Come Thursday with the reason, " +
+      "or with an honest statement that you cannot find one. ";
+  } else if(!swissCommon && saSectional){
+    d += "<strong>You held the pair together.</strong> You declined to call " +
+      "pre-1971 Switzerland rule of the many in the common interest, which means " +
+      "you applied the III.1 franchise criterion consistently across cases 2 and " +
+      "3. That is the harder and more defensible position. Be ready to say what " +
+      "it commits you to about every regime that has ever excluded a category of " +
+      "adults \u2014 which, before the twentieth century, is all of them. ";
+  } else {
+    d += "<strong>Your treatment of cases 2 and 3 is unusual.</strong> Most " +
+      "students call Switzerland correct and South Africa deviant. You did " +
+      "something else, and the debrief needs to hear what criterion produced it. ";
+  }
+
+  if(cyprusBreak){
+    d += "On Cyprus 1960 you recorded that the scheme cannot say, which is the " +
+      "right answer and the one the case was chosen to produce. The task now is " +
+      "to name the missing concept rather than simply note the absence. ";
+  } else {
+    d += "On Cyprus 1960 you forced a classification. Look again at what you had " +
+      "to ignore to do it \u2014 the two separately elected heads of the executive, " +
+      "the reciprocal vetoes, the two Communal Chambers, the guarantor powers. " +
+      "Forcing a case into a scheme that does not fit it is the commonest " +
+      "methodological error in comparative politics, and noticing that you have " +
+      "done it is worth more than getting it right first time. ";
+  }
+
+  if(athensDev){
+    d += "You also classified Athens as a deviation, which is what Aristotle's " +
+      "own criteria require and what most students resist.";
+  } else {
+    d += "You declined to classify Athens as a deviation. Read III.6\u20137 again " +
+      "and ask whether you were applying Aristotle's criterion or your own " +
+      "approval.";
+  }
+  document.getElementById("diagnostic").innerHTML = d;
+
+  var ln = "PSIR307-W3|build:" + TYPES[verdictKey].name.toLowerCase() +
+           "|n:" + verdictKey.split("-")[0] + ",i:" + verdictKey.split("-")[1] + "|cases:";
+  var parts = [];
+  for(i=0;i<CASES.length;i++){
+    parts.push(caseAns[i].num + "/" + caseAns[i].inte);
+  }
+  ln += parts.join(",");
+  document.getElementById("line").value = ln;
+
+  go("res");
+}
+
+/* ============ NAV / UTIL ============ */
+function go(which){
+  var ids = ["s0","s1","s2","s3","sres"], i;
+  for(i=0;i<ids.length;i++){
+    var el = document.getElementById(ids[i]);
+    if(el){ el.className = "stage"; }
+  }
+  var target = (which === "res") ? document.getElementById("sres")
+                                 : document.getElementById("s"+which);
+  if(target){ target.className = "stage active"; }
+  if(window.scrollTo){ window.scrollTo(0,0); }
+}
+
+function copyBox(id,btn){
+  var el = document.getElementById(id), ok = false;
+  try{
+    el.removeAttribute("readonly");
+    el.focus();
+    el.setSelectionRange(0, el.value.length);
+    ok = document.execCommand("copy");
+    el.setAttribute("readonly","readonly");
+  }catch(e){ ok = false; }
+  btn.innerHTML = ok ? "Copied" : "Copy failed \u2014 select the text and copy by hand";
+}
+
+function toggleTeach(){
+  var t = document.getElementById("teach");
+  t.className = (t.className === "on") ? "" : "on";
+  if(t.className === "on" && t.scrollIntoView){ t.scrollIntoView(); }
+}
+
+renderBuilder();
+renderCases();
+if(window.location.hash === "#teach"){ toggleTeach(); }
+</script>
+
+</body>
+</html>
