@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<title>Who Decides? — PSIR 307 Week 2</title>
+<style>
+:root{}
+*{box-sizing:border-box}
+body{margin:0;padding:0;background:#ffffff;color:#1b1f24;
+ font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:1.55}
+header{background:#103460;color:#ffffff;padding:18px 16px}
+header .kicker{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
+ color:#c8d6e8;margin:0 0 6px}
+header h1{margin:0;font-size:1.5rem;line-height:1.2}
+header .sub{margin:6px 0 0;font-size:.95rem;color:#dbe5f1}
+.wrap{max-width:780px;margin:0 auto;padding:16px}
+.card{border:1px solid #c9d3e0;border-radius:6px;padding:16px;margin:0 0 18px;background:#fff}
+.card.tinted{background:#EEF2F8}
+h2{font-size:1.2rem;color:#103460;margin:0 0 10px;line-height:1.25}
+h3{font-size:1rem;color:#103460;margin:18px 0 6px}
+p{margin:0 0 12px}
+.meta{font-size:.84rem;color:#5E646E;margin:0 0 12px}
+.brief{font-size:.97rem}
+.srcnote{font-size:.82rem;color:#5E646E;border-left:3px solid #c9d3e0;
+ padding:6px 0 6px 10px;margin:12px 0}
+.disclose{border:1px solid #8C500A;background:#FBF2E3;border-radius:6px;
+ padding:12px;margin:14px 0;font-size:.93rem}
+.disclose strong{color:#8C500A}
+.q{margin:18px 0 0}
+.q .qtext{font-weight:bold;display:block;margin:0 0 4px}
+.q .qhint{font-size:.84rem;color:#5E646E;display:block;margin:0 0 8px}
+.scale{display:block;width:100%;border-collapse:separate;border-spacing:4px 0}
+.scalerow{display:table;width:100%;table-layout:fixed}
+.opt{display:table-cell;padding:2px}
+.opt button{width:100%;min-height:48px;font:inherit;font-size:1.05rem;
+ background:#fff;color:#103460;border:1px solid #9fb2c8;border-radius:4px;
+ cursor:pointer;-webkit-appearance:none}
+.opt button:active{background:#dde6f2}
+.opt button.sel{background:#103460;color:#fff;border-color:#103460;font-weight:bold}
+.ends{display:table;width:100%;table-layout:fixed;font-size:.78rem;
+ color:#5E646E;margin:4px 0 0}
+.ends span{display:table-cell}
+.ends span.r{text-align:right}
+nav.pager{display:block;margin:20px 0 0}
+nav.pager button{min-height:50px;min-width:44px;font:inherit;font-size:1rem;
+ border-radius:4px;cursor:pointer;padding:0 18px}
+.btn-primary{background:#103460;color:#fff;border:1px solid #103460}
+.btn-plain{background:#fff;color:#103460;border:1px solid #9fb2c8}
+.btn-primary[disabled]{background:#9fb2c8;border-color:#9fb2c8;cursor:default}
+.pagerrow{display:table;width:100%}
+.pagerleft{display:table-cell;text-align:left}
+.pagerright{display:table-cell;text-align:right}
+.progress{font-size:.82rem;color:#5E646E;text-align:center;margin:10px 0 0}
+.stage{display:none}
+.stage.active{display:block}
+table.res{width:100%;border-collapse:collapse;font-size:.9rem;margin:10px 0 14px}
+table.res th,table.res td{border:1px solid #c9d3e0;padding:7px 8px;text-align:left}
+table.res th{background:#EEF2F8;color:#103460;font-size:.82rem}
+table.res td.n{text-align:center;width:14%}
+.rbox{border:2px solid #103460;border-radius:6px;padding:14px;margin:12px 0;
+ background:#EEF2F8;text-align:center}
+.rbox .rnum{font-size:2.4rem;font-weight:bold;color:#103460;line-height:1}
+.rbox .rband{font-size:1rem;color:#103460;margin:6px 0 0}
+.bands{font-size:.86rem;color:#5E646E;margin:10px 0 0}
+.bands li{margin:0 0 3px}
+textarea{width:100%;min-height:110px;font:inherit;font-size:.95rem;padding:10px;
+ border:1px solid #9fb2c8;border-radius:4px;background:#fff;color:#1b1f24}
+textarea[readonly]{background:#f5f7fa;font-family:Consolas,Monaco,monospace;
+ font-size:.82rem;min-height:70px}
+.copy{width:100%;min-height:50px;font:inherit;font-size:1rem;background:#103460;
+ color:#fff;border:1px solid #103460;border-radius:4px;cursor:pointer;margin:8px 0 0}
+.formlink{display:block;text-align:center;line-height:50px;min-height:50px;
+ background:#fff;color:#103460;border:1px solid #103460;border-radius:4px;
+ text-decoration:none;font-size:1rem;margin:10px 0 0}
+.pull{font-style:italic;color:#103460;border-left:3px solid #8C500A;
+ padding:2px 0 2px 12px;margin:14px 0;font-size:.97rem}
+.pull cite{display:block;font-style:normal;font-size:.8rem;color:#5E646E;margin:4px 0 0}
+footer{border-top:1px solid #c9d3e0;margin:10px 0 0;padding:14px 16px 28px;
+ font-size:.8rem;color:#5E646E}
+footer a{color:#103460}
+.teachlink{font-size:.78rem;color:#5E646E;text-decoration:underline;cursor:pointer;
+ background:none;border:none;padding:6px 0;font-family:inherit}
+#teach{display:none}
+#teach.on{display:block}
+.warn{color:#8C500A;font-size:.86rem;margin:8px 0 0}
+@media screen and (max-width:420px){
+ body{font-size:16px}
+ .opt button{font-size:.95rem;min-height:52px}
+ header h1{font-size:1.3rem}
+}
+@media print{
+ .noprint{display:none !important}
+ body{font-size:10.5pt;line-height:1.35}
+ header{background:#fff;color:#000;border-bottom:2px solid #000;padding:0 0 8pt}
+ header .kicker,header .sub{color:#000}
+ .wrap{max-width:100%;padding:0}
+ .stage{display:block !important;page-break-inside:avoid}
+ .card{border:1px solid #000;margin:0 0 10pt;padding:8pt}
+ .card.tinted{background:#fff}
+ .opt button{border:1px solid #000;background:#fff;color:#000;min-height:22pt}
+ .disclose{border:1px solid #000;background:#fff}
+ a{color:#000;text-decoration:none}
+ #teach{display:none !important}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <p class="kicker">PSIR 307 &middot; History of Political Thought I &middot; Week 2</p>
+  <h1>Who Decides?</h1>
+  <p class="sub">Plato, <em>Republic</em> VI&ndash;VII &middot; four cases of expert authority against popular judgement</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ STAGE 0: INTRO ============ -->
+<div class="stage active" id="s0">
+  <div class="card tinted">
+    <h2>What this activity does, stated plainly</h2>
+    <p class="brief">You will read four real cases in which a body of experts
+    decided something, or displaced somebody who had been elected, or had its
+    plan put to a vote. For each case you answer two separate questions: whether
+    the arrangement was <strong>legitimate</strong>, and whether you
+    <strong>agree with the substance</strong> of what was decided.</p>
+
+    <div class="disclose">
+      <strong>No hidden test.</strong> At the end, this page calculates the
+      correlation between your two sets of answers &mdash; that is, whether your
+      judgements about legitimacy move together with your agreement about
+      outcomes. For most people they move together quite closely. You are being
+      told this now, before you answer, because a gotcha would teach you nothing
+      except to distrust the instrument. Answer as you actually think.
+    </div>
+
+    <p class="brief">Four cases, two questions each, then one written sentence.
+    About twelve minutes.</p>
+
+    <p class="meta"><strong>Privacy.</strong> Nothing is transmitted from this
+    page: your answers stay in this browser tab and are not stored anywhere.
+    At the end you copy a result line and paste it into the Week&nbsp;2
+    Microsoft Form, which does go to a university system under EMU's tenancy.
+    No name or student-number field appears here, because the Form identifies
+    you through your institutional sign-in. Reloading this page clears your
+    answers.</p>
+  </div>
+
+  <nav class="pager noprint">
+    <div class="pagerrow">
+      <div class="pagerleft"></div>
+      <div class="pagerright">
+        <button type="button" class="btn-primary" onclick="go(1)">Begin &rarr;</button>
+      </div>
+    </div>
+  </nav>
+  <p class="progress noprint">Introduction</p>
+</div>
+
+<!-- ============ CASE STAGES (built by script) ============ -->
+<div id="cases"></div>
+
+<!-- ============ RESULTS ============ -->
+<div class="stage" id="sres">
+  <div class="card">
+    <h2>Your two columns</h2>
+    <table class="res">
+      <thead><tr><th>Case</th><th class="n">Legitimacy</th><th class="n">Agreement</th></tr></thead>
+      <tbody id="restable"></tbody>
+    </table>
+
+    <div class="rbox">
+      <div class="rnum" id="rnum">&ndash;</div>
+      <div class="rband" id="rband"></div>
+    </div>
+
+    <p id="rinterp" class="brief"></p>
+
+    <ul class="bands">
+      <li><strong>&plusmn;0.80 to &plusmn;1.00</strong> &mdash; strong: the two judgements are
+      close to a single judgement.</li>
+      <li><strong>&plusmn;0.50 to &plusmn;0.79</strong> &mdash; moderate: they track each other
+      with exceptions.</li>
+      <li><strong>&plusmn;0.20 to &plusmn;0.49</strong> &mdash; weak.</li>
+      <li><strong>below &plusmn;0.20</strong> &mdash; none: you are judging the arrangement
+      separately from the outcome.</li>
+      <li class="warn">Four cases is a very small number. This figure describes
+      your pattern across these four items; it is not a measurement of your
+      character, and a different four cases might move it.</li>
+    </ul>
+  </div>
+
+  <div class="card tinted">
+    <h2>Why we did this to Plato</h2>
+    <p class="brief">The argument of <em>Republic</em> VII is that authority
+    should belong to those who know. Nobody in this room rejects that argument
+    outright &mdash; you all want the surgeon chosen for competence. The
+    difficulty is that the argument needs a way of identifying knowledge that
+    does not reduce to agreeing with the conclusion. If your two columns move
+    together, then in practice your test for &ldquo;they were entitled to
+    decide&rdquo; is &ldquo;they decided what I would have decided&rdquo;
+    &mdash; which is not a test of expertise at all, and which the philosopher-ruler
+    argument cannot survive.</p>
+
+    <p class="pull">Men would say of him that up he went and down he came
+    without his eyes.
+      <cite>Republic VII, 517a (Jowett trans., 1892)</cite></p>
+
+    <p class="brief">Notice also what Socrates does at 504e, before any of the
+    famous images: asked what the Good is, he refuses to say, and offers a
+    likeness instead. The institution in Book VII is built on a knowledge whose
+    possessor declines to define it. Hold that against your own correlation
+    figure and the week's question is in front of you.</p>
+  </div>
+
+  <div class="card">
+    <h2>Coda &mdash; one sentence, required</h2>
+    <p class="brief">Case 4 was the one closest to home. In one or two
+    sentences: what does <em>your</em> correlation figure imply about how you
+    should read the April 2004 result &mdash; your own judgement of it, not
+    anyone else's?</p>
+    <textarea id="coda" placeholder="One or two sentences."></textarea>
+    <p class="warn" id="codawarn" style="display:none">Please write at least a
+    few words before continuing.</p>
+  </div>
+
+  <nav class="pager noprint">
+    <div class="pagerrow">
+      <div class="pagerleft">
+        <button type="button" class="btn-plain" onclick="go(4)">&larr; Back</button>
+      </div>
+      <div class="pagerright">
+        <button type="button" class="btn-primary" onclick="toSubmit()">Finish &rarr;</button>
+      </div>
+    </div>
+  </nav>
+  <p class="progress noprint">Results</p>
+</div>
+
+<!-- ============ SUBMIT ============ -->
+<div class="stage" id="ssub">
+  <div class="card">
+    <h2>Submit</h2>
+    <p class="brief">The Week&nbsp;2 form has two questions. Copy the first box
+    into question&nbsp;1 and the second box into question&nbsp;2.</p>
+
+    <h3>1 &mdash; Result line</h3>
+    <textarea id="line" readonly></textarea>
+    <button type="button" class="copy" onclick="copyBox('line',this)">Copy the result line</button>
+
+    <h3>2 &mdash; Your coda sentence</h3>
+    <textarea id="codaout" readonly></textarea>
+    <button type="button" class="copy" onclick="copyBox('codaout',this)">Copy the coda</button>
+
+    <a class="formlink" id="formlink"
+       href="PASTE-FORM-LINK-HERE"
+       target="_blank" rel="noopener">Open the Week&nbsp;2 form</a>
+
+    <p class="meta">If copying fails on your device, select the text in the box
+    and copy it by hand. If the form will not open, write your result line on
+    paper and bring it Thursday &mdash; the figures matter for the debrief.</p>
+  </div>
+
+  <div class="card tinted">
+    <h2>Before Thursday</h2>
+    <p class="brief">Bring one sentence to the Question Ledger: the strongest
+    objection to Plato's argument that does <em>not</em> depend on disliking its
+    conclusion. Objections of the form &ldquo;this would lead to tyranny&rdquo;
+    are the easy ones and are already on the board.</p>
+  </div>
+
+  <nav class="pager noprint">
+    <div class="pagerrow">
+      <div class="pagerleft">
+        <button type="button" class="btn-plain" onclick="go('res')">&larr; Back to results</button>
+      </div>
+      <div class="pagerright"></div>
+    </div>
+  </nav>
+  <p class="progress noprint">Submission</p>
+</div>
+
+<!-- ============ INSTRUCTOR PANEL ============ -->
+<div class="card" id="teach">
+  <h2>Instructor view</h2>
+  <h3>Sequence, 50-minute session</h3>
+  <p class="brief">Minutes 0&ndash;3: state the disclosure aloud as well as on
+  screen &mdash; they must know the instrument measures them before they use it.
+  Minutes 3&ndash;15: four cases, individually, phones or laptops.
+  Minutes 15&ndash;20: hands up by correlation band, write the distribution on
+  the board. Minutes 20&ndash;40: debrief below. Minutes 40&ndash;45: live poll.
+  Minutes 45&ndash;50: exit ticket.</p>
+
+  <h3>Debrief, in order</h3>
+  <p class="brief">Start with Case&nbsp;3, not Case&nbsp;1. Germany is the case
+  that breaks the frame: the government conceded that the question was not one
+  that reactor engineers could settle, and then appointed a commission anyway.
+  Ask what the commission was expert <em>in</em>. If the answer is &ldquo;values,
+  not facts,&rdquo; the Platonic claim has been conceded in form and emptied in
+  substance, and that is the hinge of the hour.</p>
+  <p class="brief">Then Cases&nbsp;1 and 2 together: Italy is expertise
+  installed, Greece is expertise prevailing over an explicit vote. Students with
+  high correlations usually split these two, which gives you a live example of
+  the pattern without anyone having to confess.</p>
+  <p class="brief">Case&nbsp;4 last. Expect the room's correlation to be highest
+  here and expect that to be uncomfortable. Do not resolve it. The point is that
+  a legitimacy judgement which tracks the outcome cannot do the work Book VII
+  needs it to do, whichever way the student voted.</p>
+
+  <h3>If the room's correlations come out low</h3>
+  <p class="brief">Some cohorts, especially one that has done PSIR&nbsp;308,
+  answer strategically because they can see the instrument. Do not treat this as
+  failure: ask them directly whether they separated the two judgements or
+  performed separating them, and whether they could tell the difference from the
+  inside. That question is better than the result.</p>
+
+  <h3>Live poll cue, minute 40</h3>
+  <p class="brief">Teams Forms, respondent names <em>not</em> recorded, launched
+  inside the meeting so results stay hidden. Item&nbsp;1 repeats the Case&nbsp;4
+  legitimacy question on the same five-point scale, to compare with the entry
+  ticket. Item&nbsp;2: did your answer change, yes or no. Item&nbsp;3, if yes:
+  because of the argument, or because you saw the room? Ninety seconds, then
+  close item&nbsp;1 before discussion resumes.</p>
+
+  <h3>Texts to have open</h3>
+  <p class="brief"><em>Republic</em> 504e&ndash;509c and 514a&ndash;521b, Jowett,
+  at gutenberg.org/files/1497/1497-h/1497-h.htm. The compulsion passage at 519d
+  &ndash;520a is the one to read aloud if the room concludes too comfortably that
+  experts should simply be left to it.</p>
+
+  <h3>Fallback</h3>
+  <p class="brief">If the network fails, the printed sheet carries all four
+  cases and the scales; collect the sheets and the correlation is computable by
+  hand in the Thursday session, which is itself a usable exercise.</p>
+</div>
+
+<footer>
+  <p>PSIR 307 &middot; History of Political Thought I &middot; Fall 2026&ndash;27 &middot;
+  Prof. Dr. Erol Kaymak &middot; Eastern Mediterranean University</p>
+  <p>Runs offline in a single file. No data leaves this page. Cases are
+  documented events; sources are named with each case. This activity is an
+  instrument for examining your own judgement and is
+  <strong>not citable</strong> as evidence about Plato or about any of the four
+  cases.</p>
+  <p class="noprint"><button type="button" class="teachlink" onclick="toggleTeach()">Instructor view</button></p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script>
+/* ---------- data ---------- */
+var CASES = [
+  {
+    n: 1,
+    title: "Italy replaces an elected prime minister with a cabinet of experts",
+    date: "Rome, 12\u201318 November 2011",
+    brief: "With the yield spread on Italian bonds above 550 basis points and " +
+      "the government unable to command a majority, Silvio Berlusconi resigned " +
+      "on 12 November 2011. President Giorgio Napolitano did not call an " +
+      "election. He invited Mario Monti \u2014 an economist, former rector of " +
+      "Bocconi, former European Commissioner, and not a member of either " +
+      "chamber \u2014 to form a government. Monti was sworn in on 16 November " +
+      "at the head of a cabinet composed entirely of non-parliamentarians: " +
+      "professors, bankers, officials. The press called them i tecnici. Both " +
+      "chambers gave confidence on 17 and 18 November. The government then " +
+      "legislated pension changes, labour-market reform and tax rises that no " +
+      "party had put to voters. Italians next voted in February 2013.",
+    src: "Sources: Presidency of the Republic communiqués, 13\u201316 Nov 2011; " +
+      "Senate and Chamber confidence votes, 17\u201318 Nov 2011.",
+    qL: "Appointing an unelected cabinet of experts, rather than holding an " +
+        "election, was a legitimate way for Italy to decide what to do in " +
+        "November 2011.",
+    qA: "The measures the Monti government then adopted were, on balance, the " +
+        "right ones for Italy."
+  },
+  {
+    n: 2,
+    title: "Greece votes No and the creditors' terms prevail",
+    date: "Athens and Brussels, 5\u201313 July 2015",
+    brief: "On 5 July 2015 Greek voters were asked whether to accept the " +
+      "bailout terms proposed by the European Commission, the European Central " +
+      "Bank and the IMF. On a turnout of about 62 per cent, 61.3 per cent voted " +
+      "No. The government had campaigned for No and treated the result as a " +
+      "mandate. Eight days later, on 13 July, the Euro Summit agreed a third " +
+      "programme on terms widely judged harsher than those the referendum had " +
+      "rejected, including a privatisation fund and prior actions to be " +
+      "legislated within three days. Prime Minister Alexis Tsipras accepted it " +
+      "and carried the enabling measures through parliament on 15\u201316 July " +
+      "with opposition votes, against part of his own party. The institutions' " +
+      "position was that the arithmetic of debt sustainability was not a matter " +
+      "a national vote could alter.",
+    src: "Sources: Greek Ministry of Interior official referendum results, " +
+      "5 July 2015; Euro Summit statement, 13 July 2015.",
+    qL: "That the creditor institutions' terms prevailed over the referendum " +
+        "result was legitimate.",
+    qA: "The agreement of 13 July 2015 was, on balance, the right outcome for " +
+        "Greece."
+  },
+  {
+    n: 3,
+    title: "Germany appoints an ethics commission to decide a technical question",
+    date: "Berlin, 14 March \u2013 30 June 2011",
+    brief: "After the Fukushima accident of 11 March 2011, Chancellor Angela " +
+      "Merkel suspended the extension of reactor lifetimes and ordered " +
+      "reviews. Two bodies reported. The Reactor Safety Commission, staffed by " +
+      "nuclear engineers, examined German plants and found differing robustness " +
+      "margins but no acute technical ground for immediate shutdown; the " +
+      "seismic and flood risks that destroyed Fukushima Daiichi are not German " +
+      "risks. Alongside it the government appointed an Ethics Commission for a " +
+      "Safe Energy Supply, chaired by Klaus T\u00f6pfer and Matthias Kleiner " +
+      "and composed of theologians, sociologists, a philosopher, " +
+      "industrialists and church representatives \u2014 deliberately not " +
+      "primarily nuclear specialists. It reported on 30 May 2011 that the " +
+      "phase-out was a question of values rather than of physics, and " +
+      "recommended closure by 2022. The Bundestag legislated the phase-out on " +
+      "30 June 2011 by a large majority.",
+    src: "Sources: Ethikkommission Sichere Energieversorgung, report of 30 May " +
+      "2011; Reaktor-Sicherheitskommission stress-test report, May 2011; " +
+      "Bundestag vote of 30 June 2011.",
+    qL: "Appointing a body of non-specialists to advise on this question, and " +
+        "then acting on its recommendation, was a legitimate way to decide.",
+    qA: "The decision to close Germany's reactors by 2022 was, on balance, " +
+        "correct."
+  },
+  {
+    n: 4,
+    title: "An internationally drafted settlement is put to two referenda in Cyprus",
+    date: "Cyprus, 31 March \u2013 24 April 2004",
+    brief: "The fifth and final version of the UN settlement plan was " +
+      "completed at B\u00fcrgenstock on 31 March 2004 after negotiations in " +
+      "which the mediating team supplied text the parties had not agreed. The " +
+      "plan ran to some nine thousand pages with annexes. It was put to " +
+      "separate simultaneous referenda on 24 April 2004, as a single package, " +
+      "not amendable, with no provision for renegotiating particular " +
+      "provisions. Turnout was high on both sides. Greek Cypriots rejected the " +
+      "plan, 75.8 per cent voting No; Turkish Cypriots approved it, 64.9 per " +
+      "cent voting Yes. Because the plan failed on one side, Cyprus acceded to " +
+      "the European Union on 1 May 2004 as a divided island, with the acquis " +
+      "suspended in the north. Much international comment afterwards treated " +
+      "the rejection as an error to be explained rather than a decision to be " +
+      "accepted.",
+    src: "Sources: Report of the UN Secretary-General on his mission of good " +
+      "offices in Cyprus, S/2004/437, 28 May 2004; official referendum results, " +
+      "24 April 2004.",
+    qL: "Putting a plan drafted largely by international mediators to a " +
+        "yes-or-no vote, as an unamendable package, was a legitimate way to " +
+        "decide the question.",
+    qA: "The plan itself was, on balance, a settlement worth having."
+  }
+];
+
+var LABELS_L = ["Clearly illegitimate","","Unsure","","Clearly legitimate"];
+var LABELS_A = ["Strongly disagree","","Unsure","","Strongly agree"];
+
+var ans = { L:[0,0,0,0], A:[0,0,0,0] };
+var current = 0;
+
+/* ---------- build case stages ---------- */
+function buildCases(){
+  var host = document.getElementById("cases");
+  var html = "";
+  var i;
+  for(i=0;i<CASES.length;i++){
+    var c = CASES[i];
+    html += '<div class="stage" id="s'+(i+1)+'">';
+    html +=   '<div class="card">';
+    html +=     '<h2>Case '+c.n+'. '+c.title+'</h2>';
+    html +=     '<p class="meta">'+c.date+'</p>';
+    html +=     '<p class="brief">'+c.brief+'</p>';
+    html +=     '<p class="srcnote">'+c.src+'</p>';
+    html +=     scaleBlock(i,"L",c.qL,
+                  "Judge the arrangement, not the result.");
+    html +=     scaleBlock(i,"A",c.qA,
+                  "Judge the result, not the arrangement.");
+    html +=   '</div>';
+    html +=   '<nav class="pager noprint"><div class="pagerrow">';
+    html +=     '<div class="pagerleft"><button type="button" class="btn-plain" ' +
+                'onclick="go('+i+')">&larr; Back</button></div>';
+    html +=     '<div class="pagerright"><button type="button" ' +
+                'class="btn-primary" id="next'+i+'" disabled onclick="nextFrom('+i+')">'+
+                (i===CASES.length-1 ? 'See my result &rarr;' : 'Next case &rarr;')+
+                '</button></div>';
+    html +=   '</div></nav>';
+    html +=   '<p class="progress noprint">Case '+c.n+' of '+CASES.length+'</p>';
+    html += '</div>';
+  }
+  host.innerHTML = html;
+}
+
+function scaleBlock(idx,col,qtext,hint){
+  var labels = (col==="L") ? LABELS_L : LABELS_A;
+  var h = '<div class="q"><label class="qtext">'+qtext+'</label>';
+  h += '<span class="qhint">'+hint+'</span>';
+  h += '<div class="scalerow">';
+  var v;
+  for(v=1;v<=5;v++){
+    h += '<span class="opt"><button type="button" id="b'+col+idx+'_'+v+'" ' +
+         'onclick="pick('+idx+',\''+col+'\','+v+')">'+v+'</button></span>';
+  }
+  h += '</div><div class="ends"><span>1 &mdash; '+labels[0]+
+       '</span><span class="r">5 &mdash; '+labels[4]+'</span></div></div>';
+  return h;
+}
+
+/* ---------- interaction ---------- */
+function pick(idx,col,v){
+  ans[col][idx] = v;
+  var k;
+  for(k=1;k<=5;k++){
+    var b = document.getElementById("b"+col+idx+"_"+k);
+    if(b){ b.className = (k===v) ? "sel" : ""; }
+  }
+  var nb = document.getElementById("next"+idx);
+  if(nb && ans.L[idx]>0 && ans.A[idx]>0){ nb.disabled = false; }
+}
+
+function nextFrom(idx){
+  if(idx === CASES.length-1){ showResults(); }
+  else { go(idx+2); }
+}
+
+function go(which){
+  var i, st = document.getElementsByTagName("div");
+  var ids = ["s0","s1","s2","s3","s4","sres","ssub"];
+  for(i=0;i<ids.length;i++){
+    var el = document.getElementById(ids[i]);
+    if(el){ el.className = "stage"; }
+  }
+  var target;
+  if(which === "res"){ target = document.getElementById("sres"); }
+  else if(which === "sub"){ target = document.getElementById("ssub"); }
+  else { target = document.getElementById("s"+which); }
+  if(target){ target.className = "stage active"; }
+  if(window.scrollTo){ window.scrollTo(0,0); }
+}
+
+/* ---------- statistics ---------- */
+function pearson(x,y){
+  var n = x.length, i, sx=0, sy=0;
+  for(i=0;i<n;i++){ sx += x[i]; sy += y[i]; }
+  var mx = sx/n, my = sy/n;
+  var num=0, dx=0, dy=0;
+  for(i=0;i<n;i++){
+    num += (x[i]-mx)*(y[i]-my);
+    dx  += (x[i]-mx)*(x[i]-mx);
+    dy  += (y[i]-my)*(y[i]-my);
+  }
+  var den = Math.sqrt(dx*dy);
+  if(den === 0){ return null; }
+  return num/den;
+}
+
+function bandOf(r){
+  var a = Math.abs(r);
+  if(a >= 0.80){ return "strong"; }
+  if(a >= 0.50){ return "moderate"; }
+  if(a >= 0.20){ return "weak"; }
+  return "none";
+}
+
+function fmt(r){
+  var s = (r<0 ? "\u2212" : "+");
+  var v = Math.abs(r);
+  var t = Math.round(v*100)/100;
+  var str = t.toFixed(2);
+  return s + str;
+}
+
+/* ---------- results ---------- */
+function showResults(){
+  var tb = "", i;
+  for(i=0;i<CASES.length;i++){
+    tb += '<tr><td>'+CASES[i].n+'. '+shortName(i)+'</td>' +
+          '<td class="n">'+ans.L[i]+'</td><td class="n">'+ans.A[i]+'</td></tr>';
+  }
+  document.getElementById("restable").innerHTML = tb;
+
+  var r = pearson(ans.L, ans.A);
+  var numEl = document.getElementById("rnum");
+  var bandEl = document.getElementById("rband");
+  var intEl = document.getElementById("rinterp");
+
+  if(r === null){
+    numEl.innerHTML = "n/a";
+    bandEl.innerHTML = "no correlation can be calculated";
+    intEl.innerHTML = "You gave the same number to all four items in at least " +
+      "one of the two columns, so there is no variation to correlate. That is " +
+      "itself a finding worth stating in the debrief: either these four cases " +
+      "really do look identical to you in that respect, or the scale is not " +
+      "capturing the distinction you are drawing. Say which, and bring it " +
+      "Thursday.";
+  } else {
+    var band = bandOf(r);
+    numEl.innerHTML = "r = " + fmt(r);
+    bandEl.innerHTML = band + (r<0 ? " (inverse)" : "");
+    intEl.innerHTML = interp(band, r);
+  }
+
+  document.getElementById("line").value = buildLine(r);
+  go("res");
+}
+
+function shortName(i){
+  var names = ["Italy 2011","Greece 2015","Germany 2011","Cyprus 2004"];
+  return names[i];
+}
+
+function interp(band, r){
+  if(band === "strong" && r > 0){
+    return "Your judgements of legitimacy and your agreement with outcomes move " +
+      "almost as one. Read strictly, that means you do not have two judgements " +
+      "here, you have one judgement reported twice: the arrangements you call " +
+      "legitimate are the arrangements that produced results you wanted. This " +
+      "is the most common pattern and it is not a moral failing \u2014 but it " +
+      "does mean you cannot use legitimacy as an independent reason, and Book " +
+      "VII's argument needs exactly that.";
+  }
+  if(band === "strong" && r < 0){
+    return "Your two columns move strongly in opposite directions: you tend to " +
+      "call arrangements legitimate precisely where you dislike what they " +
+      "produced. That is an unusual pattern and worth saying aloud. It may be " +
+      "principled \u2014 a commitment to procedure that bites hardest when it " +
+      "costs you something \u2014 or it may be an artefact of how these four " +
+      "cases happened to fall for you. Be ready to say which.";
+  }
+  if(band === "moderate"){
+    return "Your two judgements track each other with exceptions. The " +
+      "exceptions are the interesting part: find the case where your two " +
+      "numbers diverge most and work out what you were appealing to there " +
+      "that you did not appeal to elsewhere. If you can name it, you have the " +
+      "beginning of an independent criterion of legitimacy \u2014 which is " +
+      "more than the argument in Book VII supplies.";
+  }
+  if(band === "weak"){
+    return "Your columns are only loosely related, which suggests you are " +
+      "judging arrangements on something other than their results. Be sceptical " +
+      "of your own score for a moment: with four cases, a weak correlation can " +
+      "come from a genuinely procedural standard or from inconsistency. The " +
+      "test is whether you can state the standard in one sentence. Try.";
+  }
+  return "Your columns are effectively unrelated: on these four cases you " +
+    "judged the arrangement independently of the outcome. If that reflects a " +
+    "standard you can state, you are in a position to press the hardest " +
+    "question at Plato, which is how the knowledge that licenses rule is to be " +
+    "identified by anyone who does not already possess it. If you cannot state " +
+    "the standard, the independence may be noise rather than principle.";
+}
+
+function buildLine(r){
+  var rtxt = (r===null) ? "na" : fmt(r);
+  var btxt = (r===null) ? "undefined" : bandOf(r);
+  return "PSIR307-W2|L:" + ans.L.join(",") + "|A:" + ans.A.join(",") +
+         "|r:" + rtxt + "|band:" + btxt;
+}
+
+/* ---------- submit ---------- */
+function toSubmit(){
+  var coda = document.getElementById("coda").value;
+  var clean = coda.replace(/[|\r\n]+/g," ").replace(/^\s+|\s+$/g,"");
+  if(clean.length < 10){
+    document.getElementById("codawarn").style.display = "block";
+    return;
+  }
+  document.getElementById("codawarn").style.display = "none";
+  document.getElementById("codaout").value = clean;
+  go("sub");
+}
+
+function copyBox(id,btn){
+  var el = document.getElementById(id);
+  var ok = false;
+  try{
+    el.removeAttribute("readonly");
+    el.focus();
+    el.setSelectionRange(0, el.value.length);
+    ok = document.execCommand("copy");
+    el.setAttribute("readonly","readonly");
+  }catch(e){ ok = false; }
+  btn.innerHTML = ok ? "Copied \u2014 now paste it into the form"
+                     : "Copy failed \u2014 select the text and copy by hand";
+}
+
+/* ---------- instructor view ---------- */
+function toggleTeach(){
+  var t = document.getElementById("teach");
+  t.className = (t.className === "on") ? "" : "on";
+  if(t.className === "on" && t.scrollIntoView){ t.scrollIntoView(); }
+}
+
+/* ---------- init ---------- */
+buildCases();
+if(window.location.hash === "#teach"){ toggleTeach(); }
+</script>
+
+</body>
+</html>
